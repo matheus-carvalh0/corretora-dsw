@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <header class="topbar">
-      <span class="logo">📈 Corretora DSW</span>
+      <BrandMark />
       <nav>
         <RouterLink to="/market">Mercado</RouterLink>
         <RouterLink to="/portfolio">Carteira</RouterLink>
@@ -13,14 +13,15 @@
     <main class="container">
       <div class="clock-bar">
         <span class="clock">🕑 {{ simulationTime }}</span>
-        <button @click="advance(1)" :disabled="loading">+1 min</button>
-        <button @click="advance(5)" :disabled="loading">+5 min</button>
+        <button class="btn-clock" @click="advance(1)" :disabled="loading">+1 min</button>
+        <button class="btn-clock" @click="advance(5)" :disabled="loading">+5 min</button>
         <button class="btn-add" @click="showAddModal = true">+ Adicionar ação</button>
       </div>
 
       <p v-if="error" class="error">{{ error }}</p>
 
-      <table v-if="market.length">
+      <div class="table-wrap" v-if="market.length">
+      <table>
         <thead>
           <tr>
             <th>Ticker</th>
@@ -47,6 +48,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
       <p v-else-if="!loading">Nenhuma ação na sua lista.</p>
 
       <!-- Modal: adicionar ação -->
@@ -61,7 +63,7 @@
           </select>
           <div class="modal-actions">
             <button @click="addStock" :disabled="!selectedTicker">Adicionar</button>
-            <button @click="showAddModal = false">Cancelar</button>
+            <button class="btn-secondary" @click="showAddModal = false">Cancelar</button>
           </div>
         </div>
       </div>
@@ -88,7 +90,7 @@
           </p>
           <div class="modal-actions">
             <button @click="confirmBuy">Confirmar compra</button>
-            <button @click="buyModal.open = false">Cancelar</button>
+            <button class="btn-secondary" @click="buyModal.open = false">Cancelar</button>
           </div>
         </div>
       </div>
@@ -101,6 +103,7 @@ import { ref, reactive, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
+import BrandMark from '../components/BrandMark.vue';
 
 const router = useRouter();
 const auth   = useAuthStore();

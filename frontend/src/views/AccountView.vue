@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <header class="topbar">
-      <span class="logo">📈 Corretora DSW</span>
+      <BrandMark />
       <nav>
         <RouterLink to="/market">Mercado</RouterLink>
         <RouterLink to="/portfolio">Carteira</RouterLink>
@@ -16,7 +16,8 @@
 
       <p v-if="error" class="error">{{ error }}</p>
 
-      <table v-if="transactions.length">
+      <div class="table-wrap" v-if="transactions.length">
+      <table>
         <thead>
           <tr>
             <th>Horário</th>
@@ -40,6 +41,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
       <p v-else-if="!loading">Nenhum lançamento ainda.</p>
     </main>
   </div>
@@ -50,6 +52,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
+import BrandMark from '../components/BrandMark.vue';
 
 const router = useRouter();
 const auth   = useAuthStore();

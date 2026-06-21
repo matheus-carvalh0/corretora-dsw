@@ -1,7 +1,7 @@
 <template>
   <div class="auth-page">
     <div class="auth-card">
-      <h1>📈 Corretora DSW</h1>
+      <BrandMark class="brand-lg" />
       <h2>Entrar</h2>
       <form @submit.prevent="handleLogin">
         <label>E-mail
@@ -24,6 +24,7 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import BrandMark from '../components/BrandMark.vue';
 
 const router = useRouter();
 const auth   = useAuthStore();

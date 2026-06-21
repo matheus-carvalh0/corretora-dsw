@@ -1,0 +1,554 @@
+/* ============================================================
+   Corretora DSW — Design System
+   Conceito: terminal de pregão. Fundo tinta-azulada (não preto puro),
+   acento latão/âmbar (cor clássica de fitas de ticker e mostradores
+   de painel de bolsa), verde/terracota mudos para ganho/perda —
+   a paleta semântica que o próprio domínio (corretora) já exige.
+   ============================================================ */
+
+:root {
+  /* ---- Cor ---- */
+  --ink:         #0B1420;  /* fundo base */
+  --surface:     #121E2E;  /* cartões, topbar */
+  --surface-2:   #1A2A3D;  /* elementos elevados: modais, hover */
+  --surface-3:   #233447;  /* hover sobre elevados */
+  --hairline:    #28384D;  /* bordas sutis */
+  --hairline-2:  #34495F;  /* bordas em foco/hover */
+
+  --text:        #ECEAE1;  /* texto principal, branco quente */
+  --text-dim:    #AAB6C6;  /* texto secundário */
+  --text-faint:  #6E7E92;  /* legendas, placeholders */
+
+  --brass:       #C7A042;  /* acento primário — latão de fita de ticker */
+  --brass-hi:    #DDBD6A;  /* hover/realce do latão */
+  --brass-low:   #8A763A;  /* latão escurecido, uso sobre claro */
+  --brass-soft:  rgba(199, 160, 66, 0.14);
+
+  --gain:        #45A872;  /* alta — verde mudo, não neon */
+  --gain-soft:   rgba(69, 168, 114, 0.14);
+  --loss:        #CC6B4E;  /* baixa — terracota/tijolo, não vermelho neon */
+  --loss-soft:   rgba(204, 107, 78, 0.14);
+
+  /* ---- Tipografia ---- */
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* ---- Forma ---- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+
+  --shadow-card: 0 24px 60px -28px rgba(0, 0, 0, 0.65);
+  --shadow-pop:  0 30px 80px -24px rgba(0, 0, 0, 0.75);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ---------------------------------------------------------------
+   Reset
+   --------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: radial-gradient(ellipse 1200px 700px at 50% -10%, #15233570, transparent),
+              var(--ink);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+h1 { font-size: 1.7rem; }
+h2 { font-size: 1.3rem; font-weight: 600; }
+h3 { font-size: 1.1rem; }
+
+p { margin: 0 0 0.75rem; color: var(--text-dim); }
+
+a {
+  color: var(--brass-hi);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease);
+}
+a:hover { color: var(--brass); border-bottom-color: currentColor; }
+
+strong { color: var(--text); font-weight: 600; }
+
+::selection { background: var(--brass-soft); color: var(--text); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--hairline-2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brass-low); }
+
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Marca — sparkline em latão sobre tinta
+   --------------------------------------------------------------- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  color: var(--text);
+}
+.brand-mark {
+  width: 1.6em;
+  height: 1.6em;
+  flex-shrink: 0;
+}
+.brand-mark circle.ring { fill: var(--surface-2); }
+.brand-mark polyline { stroke: var(--brass); }
+.brand-mark .brand-dot { fill: var(--brass); }
+.brand-word { font-weight: 600; letter-spacing: 0.01em; }
+.brand-word strong { color: var(--brass-hi); font-weight: 700; }
+
+.brand-lg { font-size: 1.55rem; gap: 0.75rem; }
+.brand-lg .brand-mark { width: 2.1em; height: 2.1em; }
+
+/* ---------------------------------------------------------------
+   Páginas de autenticação
+   --------------------------------------------------------------- */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(199,160,66,0.10) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(180deg, var(--surface) 0%, #101B29 100%);
+  border: 1px solid var(--hairline);
+  border-top: 2px solid var(--brass);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 2rem 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.auth-card .brand { margin-bottom: 0.35rem; }
+
+.auth-card h2 {
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.auth-card form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.auth-card button[type='submit'] { width: 100%; margin-top: 0.25rem; }
+
+.auth-card > p:last-child {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-faint);
+}
+
+/* ---------------------------------------------------------------
+   Formulários
+   --------------------------------------------------------------- */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+input, select {
+  font: inherit;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--ink);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.75rem;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), background 0.15s var(--ease);
+}
+
+input::placeholder { color: var(--text-faint); }
+
+input:hover, select:hover { border-color: var(--hairline-2); }
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px var(--brass-soft);
+  background: #0E1826;
+}
+
+input[type='number'] { font-family: var(--font-mono); }
+
+select { cursor: pointer; }
+
+/* ---------------------------------------------------------------
+   Botões
+   --------------------------------------------------------------- */
+button {
+  font: inherit;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
+  color: #19120A;
+  background: linear-gradient(180deg, var(--brass-hi), var(--brass));
+  border: 1px solid var(--brass);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+  transition: transform 0.12s var(--ease), box-shadow 0.15s var(--ease), filter 0.15s var(--ease), opacity 0.15s var(--ease);
+}
+button:hover { filter: brightness(1.06); box-shadow: 0 6px 18px -8px rgba(199,160,66,0.55); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: 0.5; cursor: not-allowed; filter: none; box-shadow: none; transform: none; }
+
+.btn-secondary {
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+}
+.btn-secondary:hover { color: var(--text); background: var(--surface-2); box-shadow: none; border-color: var(--text-faint); }
+
+.btn-logout {
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+}
+.btn-logout:hover { color: var(--loss); border-color: var(--loss); background: var(--loss-soft); box-shadow: none; }
+
+.btn-clock {
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline-2);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.78rem;
+  padding: 0.5rem 0.75rem;
+}
+.btn-clock:hover { color: var(--brass-hi); border-color: var(--brass-low); background: var(--surface-3); box-shadow: none; }
+
+.btn-add {
+  background: transparent;
+  color: var(--brass-hi);
+  border: 1px dashed var(--brass-low);
+  font-size: 0.82rem;
+}
+.btn-add:hover { background: var(--brass-soft); border-style: solid; box-shadow: none; }
+
+.btn-sm {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.78rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-buy { background: linear-gradient(180deg, #5BC089, var(--gain)); border-color: var(--gain); color: #07241A; }
+.btn-buy:hover { box-shadow: 0 6px 16px -8px rgba(69,168,114,0.55); }
+
+.btn-sell { background: linear-gradient(180deg, #E08A6C, var(--loss)); border-color: var(--loss); color: #2B1108; }
+.btn-sell:hover { box-shadow: 0 6px 16px -8px rgba(204,107,78,0.55); }
+
+.btn-del {
+  background: transparent;
+  border: 1px solid var(--hairline);
+  color: var(--text-faint);
+  padding: 0.4rem 0.6rem;
+  line-height: 1;
+}
+.btn-del:hover { color: var(--loss); border-color: var(--loss); background: var(--loss-soft); box-shadow: none; }
+
+/* ---------------------------------------------------------------
+   Layout autenticado
+   --------------------------------------------------------------- */
+.page { min-height: 100vh; padding-bottom: 3rem; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.9rem 1.75rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--hairline);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-wrap: wrap;
+}
+
+.topbar .logo,
+.topbar .brand { font-size: 1.05rem; margin-right: auto; }
+
+.topbar nav { display: flex; gap: 0.35rem; }
+
+.topbar nav a {
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.88rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border-bottom: none;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.topbar nav a:hover { color: var(--text); background: var(--surface-2); }
+.topbar nav a.router-link-exact-active {
+  color: var(--brass-hi);
+  background: var(--brass-soft);
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.75rem 0;
+}
+
+/* ---------------------------------------------------------------
+   Tira de pregão — relógio de simulação (elemento de assinatura)
+   --------------------------------------------------------------- */
+.clock-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-left: 3px solid var(--brass);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.clock {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--brass-hi);
+  letter-spacing: 0.04em;
+  padding-right: 0.85rem;
+  margin-right: 0.15rem;
+  border-right: 1px solid var(--hairline);
+}
+
+.clock-bar .btn-add { margin-left: auto; }
+
+/* ---------------------------------------------------------------
+   Tabelas
+   --------------------------------------------------------------- */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  margin-bottom: 1.5rem;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 560px; }
+
+thead th {
+  text-align: left;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+tbody td:first-child { font-family: var(--font-body); }
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.12s var(--ease); }
+tbody tr:hover { background: var(--surface-2); }
+
+.pos, .neg { font-weight: 600; }
+.pos { color: var(--gain); }
+.neg { color: var(--loss); }
+.pos::before { content: '▲ '; font-size: 0.7em; }
+.neg::before { content: '▼ '; font-size: 0.7em; }
+
+/* ---------------------------------------------------------------
+   Resumo (carteira) e saldo (conta)
+   --------------------------------------------------------------- */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--text-dim);
+}
+.summary strong { font-size: 1.05rem; }
+.summary .pos::before, .summary .neg::before { content: none; }
+
+.balance-info {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.4rem;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+/* ---------------------------------------------------------------
+   Alertas / estado vazio
+   --------------------------------------------------------------- */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #F0B8A6;
+  background: var(--loss-soft);
+  border: 1px solid var(--loss);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.85rem;
+  margin: 0 0 1.25rem;
+}
+.error::before { content: '⚠'; color: var(--loss); }
+
+.container > p:not(.error):not(.balance-info) {
+  color: var(--text-faint);
+  font-style: italic;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------
+   Modais
+   --------------------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 11, 18, 0.72);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 50;
+  animation: fade-in 0.15s var(--ease);
+}
+
+.modal {
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(180deg, var(--surface-2) 0%, #142235 100%);
+  border: 1px solid var(--hairline-2);
+  border-top: 2px solid var(--brass);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 1.6rem 1.4rem;
+  box-shadow: var(--shadow-pop);
+  animation: pop-in 0.18s var(--ease);
+}
+
+.modal h3 { margin-bottom: 1rem; }
+.modal label { margin-top: 0.9rem; }
+.modal p { font-size: 0.9rem; }
+
+.modal-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 1.4rem;
+}
+.modal-actions button { flex: 1; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------------------------------------------------------------
+   404
+   --------------------------------------------------------------- */
+.not-found {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+.not-found .code {
+  font-family: var(--font-mono);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--brass);
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------
+   Responsivo
+   --------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .container { padding: 1.5rem 1rem 0; }
+  .topbar { padding: 0.8rem 1rem; gap: 0.75rem; }
+  .topbar .logo, .topbar .brand { width: 100%; margin-right: 0; }
+  .topbar nav { gap: 0.15rem; }
+  .topbar nav a { padding: 0.4rem 0.6rem; font-size: 0.82rem; }
+  .clock-bar .btn-add { margin-left: 0; width: 100%; }
+  .auth-card { padding: 1.75rem 1.4rem; }
+  .summary { flex-direction: column; gap: 0.6rem; }
+}
