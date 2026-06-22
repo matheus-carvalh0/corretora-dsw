@@ -27,11 +27,11 @@
         <tbody>
           <tr v-for="item in market" :key="item.ticker">
             <td><strong>{{ item.ticker }}</strong></td>
-            <td>{{ fmt(item.current) }}</td>
-            <td :class="item.nominalChange >= 0 ? 'pos' : 'neg'">
+            <td :key="'cur-'+item.current" class="flash-cell">{{ fmt(item.current) }}</td>
+            <td :key="'nom-'+item.nominalChange" :class="['flash-cell', item.nominalChange >= 0 ? 'pos' : 'neg']">
               {{ item.nominalChange >= 0 ? '+' : '' }}{{ fmt(item.nominalChange) }}
             </td>
-            <td :class="item.percentChange >= 0 ? 'pos' : 'neg'">
+            <td :key="'pct-'+item.percentChange" :class="['flash-cell', item.percentChange >= 0 ? 'pos' : 'neg']">
               {{ item.percentChange >= 0 ? '+' : '' }}{{ item.percentChange.toFixed(2) }}%
             </td>
             <td>
@@ -151,8 +151,11 @@ const fetchTickers = async () => {
   allTickers.value = data.data.tickers;
 };
 
-const handleTimeAdvanced = async (newTime) => {
+const handleTimeAdvanced = async (newTime, executedCount) => {
   simulationTime.value = newTime;
+  if (executedCount > 0) {
+    toast.success(`${executedCount} ordem(ns) condicional(is) atingiram o alvo e foram executadas!`);
+  }
   await fetchMarket();
 };
 
@@ -214,3 +217,14 @@ onMounted(async () => {
   await fetchTickers();
 });
 </script>
+
+<style scoped>
+@keyframes flash-bg {
+  0% { background-color: rgba(241, 196, 15, 0.8); }
+  100% { background-color: transparent; }
+}
+.flash-cell {
+  animation: flash-bg 1.2s ease-out;
+  border-radius: 4px;
+}
+</style>

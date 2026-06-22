@@ -36,13 +36,13 @@ const advanceTimeRules = [
 const advanceTime = async (req, res, next) => {
   try {
     validate(req);
-    const { minutes } = req.body;
-    const updated = await marketService.advanceClock(req.user.id, parseInt(minutes, 10));
+    const result = await marketService.advanceClock(req.user.id, parseInt(minutes, 10));
     
     // Retorna apenas a confirmação e o novo tempo, para ser mais limpo
     return success(res, {
-      simulationMinute: updated.simulationMinute,
-      simulationTime: formatSimulationTime(updated.simulationMinute),
+      simulationMinute: result.user.simulationMinute,
+      simulationTime: formatSimulationTime(result.user.simulationMinute),
+      executedCount: result.executedCount,
     }, `Relógio avançado em +${minutes} minutos.`);
   } catch (err) { next(err); }
 };

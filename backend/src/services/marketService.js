@@ -69,9 +69,9 @@ const advanceClock = async (userId, minutes) => {
   const updatedUser = await userRepository.findById(userId);
 
   // Processa ordens limitadas pendentes ao novo preço
-  await processLimitOrders(updatedUser);
+  const executedCount = await processLimitOrders(updatedUser);
 
-  return updatedUser;
+  return { user: updatedUser, executedCount };
 };
 
 /**
@@ -80,13 +80,15 @@ const advanceClock = async (userId, minutes) => {
  */
 const processLimitOrders = async (user) => {
   const pendingOrders = await orderRepository.findPendingByUser(user.id);
-  if (!pendingOrders.length) return;
+  if (!pendingOrders.length) return 0;
+
+  let executedCount = 0;
 
   let prices;
   try {
     prices = await fetchPrices(user.simulationMinute);
   } catch (_) {
-    return; // Não falha se API estiver indisponível
+    return 0; // Não falha se API estiver indisponível
   }
 
   const priceMap = Object.fromEntries(prices.map((p) => [p.ticker, p.preco]));
@@ -112,11 +114,14 @@ const processLimitOrders = async (user) => {
         } else {
           await portfolioService.executeSell(user.id, order.ticker, order.quantity, currentPrice, order.id);
         }
+        executedCount++;
       } catch (_) {
         // Ordem não pode ser executada (saldo insuficiente etc.) — mantém pendente
       }
     }
   }
+
+  return executedCount;
 };
 
 module.exports = { fetchTickers, fetchPrices, getMarket, advanceClock };
