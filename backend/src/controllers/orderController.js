@@ -3,7 +3,7 @@ const { success, noContent } = require('../utils/response');
 
 const getOrders = async (req, res, next) => {
   try {
-    const orders = await orderRepository.findAllByUser(req.user.id);
+    const orders = await orderRepository.findPendingByUser(req.user.id);
     return success(res, { orders });
   } catch (err) { next(err); }
 };
