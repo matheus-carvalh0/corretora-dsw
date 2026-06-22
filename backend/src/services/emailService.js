@@ -1,10 +1,17 @@
 const nodemailer = require('nodemailer');
+const dns = require('dns');
+
+// Força o Node.js a usar IPv4 primeiro. 
+// O Render frequentemente não suporta rotas IPv6 completas, o que causa o erro ENETUNREACH (2607:...).
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 // Cria o transporter reutilizável com Gmail SMTP
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587', 10),
-  secure: false, // true para 465, false para 587 (STARTTLS)
+  port: parseInt(process.env.SMTP_PORT || '465', 10),
+  secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465' || !process.env.SMTP_PORT, 
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
