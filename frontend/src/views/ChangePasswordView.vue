@@ -28,8 +28,6 @@
             <input v-model="form.confirmPassword" type="password" required placeholder="Repita a nova senha" minlength="6" />
           </label>
 
-          <p v-if="error" class="error">{{ error }}</p>
-          <p v-if="successMsg" class="success">{{ successMsg }}</p>
 
           <div class="form-actions">
             <button type="submit" :disabled="loading">
@@ -51,25 +49,22 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
 import BrandMark from '../components/BrandMark.vue';
+import { useToast } from '../composables/useToast';
 
 const router = useRouter();
 const auth   = useAuthStore();
+const toast  = useToast();
 
 const form       = reactive({ currentPassword: '', newPassword: '', confirmPassword: '' });
 const loading    = ref(false);
-const error      = ref('');
-const successMsg = ref('');
 
 const handleChange = async () => {
-  error.value      = '';
-  successMsg.value = '';
-
   if (form.newPassword !== form.confirmPassword) {
-    error.value = 'As senhas não coincidem.';
+    toast.error('As senhas não coincidem.');
     return;
   }
   if (form.newPassword.length < 6) {
-    error.value = 'A nova senha deve ter no mínimo 6 caracteres.';
+    toast.error('A nova senha deve ter no mínimo 6 caracteres.');
     return;
   }
 
@@ -79,12 +74,17 @@ const handleChange = async () => {
       currentPassword: form.currentPassword,
       newPassword: form.newPassword,
     });
-    successMsg.value = data.message || 'Senha alterada com sucesso!';
+    toast.success(data.message || 'Senha alterada com sucesso! Faça login novamente.');
     form.currentPassword = '';
     form.newPassword     = '';
     form.confirmPassword = '';
+    
+    // Logoff automático após trocar a senha
+    setTimeout(() => {
+      handleLogout();
+    }, 1500);
   } catch (err) {
-    error.value = err.response?.data?.message || 'Erro ao alterar senha.';
+    toast.error(err.response?.data?.message || 'Erro ao alterar senha.');
   } finally {
     loading.value = false;
   }
