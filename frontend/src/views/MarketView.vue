@@ -55,8 +55,20 @@
             </option>
           </select>
           <div class="modal-actions">
-            <button @click="addStock" :disabled="!selectedTicker">Adicionar</button>
-            <button class="btn-secondary" @click="showAddModal = false">Cancelar</button>
+            <button class="btn btn-primary" @click="addStock" :disabled="!selectedTicker">Adicionar</button>
+            <button class="btn btn-secondary" @click="showAddModal = false">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de Confirmação de Remoção -->
+      <div v-if="tickerToRemove" class="modal-overlay" @click.self="tickerToRemove = null">
+        <div class="modal">
+          <h3>Remover Ação</h3>
+          <p>Deseja remover <strong>{{ tickerToRemove }}</strong> da sua lista de acompanhamento?</p>
+          <div class="modal-actions">
+            <button class="btn btn-secondary" @click="tickerToRemove = null">Voltar</button>
+            <button class="btn btn-del" @click="executeRemove" :disabled="loading">Sim, Remover</button>
           </div>
         </div>
       </div>
@@ -97,8 +109,10 @@ import { useRouter } from 'vue-router';
 import api from '../services/api';
 import Topbar from '../components/Topbar.vue';
 import ClockBar from '../components/ClockBar.vue';
+import { useToast } from '../composables/useToast';
 
 const router = useRouter();
+const toast = useToast();
 
 const market         = ref([]);
 const simulationTime = ref('14:00');
@@ -107,6 +121,8 @@ const error          = ref('');
 const showAddModal   = ref(false);
 const allTickers     = ref([]);
 const selectedTicker = ref('');
+
+const tickerToRemove = ref(null);
 
 const buyModal = reactive({ open: false, ticker: '', price: 0, quantity: 1, orderType: 'market', limitPrice: null });
 
@@ -147,21 +163,31 @@ const handleClockError = (msg) => {
 const addStock = async () => {
   try {
     await api.post('/stocks', { ticker: selectedTicker.value });
+    toast.success(`${selectedTicker.value} adicionada à lista!`);
     showAddModal.value   = false;
     selectedTicker.value = '';
     await fetchMarket();
   } catch (err) {
-    alert(err.response?.data?.message || 'Erro ao adicionar ação.');
+    toast.error(err.response?.data?.message || 'Erro ao adicionar ação.');
   }
 };
 
-const removeStock = async (ticker) => {
-  if (!confirm(`Remover ${ticker} da lista?`)) return;
+const removeStock = (ticker) => {
+  tickerToRemove.value = ticker;
+};
+
+const executeRemove = async () => {
+  if (!tickerToRemove.value) return;
+  loading.value = true;
   try {
-    await api.delete(`/stocks/${ticker}`);
+    await api.delete(`/stocks/${tickerToRemove.value}`);
+    toast.success(`${tickerToRemove.value} removida com sucesso.`);
+    tickerToRemove.value = null;
     await fetchMarket();
   } catch (err) {
-    alert(err.response?.data?.message || 'Erro ao remover ação.');
+    toast.error(err.response?.data?.message || 'Erro ao remover ação.');
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -177,9 +203,9 @@ const confirmBuy = async () => {
       limitPrice: buyModal.orderType === 'limit' ? buyModal.limitPrice : null,
     });
     buyModal.open = false;
-    alert('Ordem de compra enviada!');
+    toast.success('Ordem de compra enviada!');
   } catch (err) {
-    alert(err.response?.data?.message || 'Erro na compra.');
+    toast.error(err.response?.data?.message || 'Erro na compra.');
   }
 };
 

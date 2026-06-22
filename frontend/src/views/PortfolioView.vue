@@ -90,7 +90,9 @@ import { useRouter } from 'vue-router';
 import api from '../services/api';
 import Topbar from '../components/Topbar.vue';
 import ClockBar from '../components/ClockBar.vue';
+import { useToast } from '../composables/useToast';
 
+const toast = useToast();
 const router = useRouter();
 
 const items          = ref([]);
@@ -139,11 +141,11 @@ const confirmSell = async () => {
       quantity: sellModal.quantity,
       limitPrice: sellModal.orderType === 'limit' ? sellModal.limitPrice : null,
     });
+    toast.success('Ordem de venda enviada!');
     sellModal.open = false;
-    alert('Ordem de venda enviada!');
     await fetchPortfolio();
   } catch (err) {
-    alert(err.response?.data?.message || 'Erro na venda.');
+    toast.error(err.response?.data?.message || 'Erro na venda.');
   }
 };
 

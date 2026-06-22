@@ -80,8 +80,10 @@ import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../services/api';
 import Topbar from '../components/Topbar.vue';
+import { useToast } from '../composables/useToast';
 
 const router = useRouter();
+const toast = useToast();
 
 const transactions = ref([]);
 const balance      = ref(0);
@@ -119,20 +121,22 @@ const openWithdraw = () => {
 const confirmDeposit = async () => {
   try {
     await api.post('/account/deposit', { amount: depositModal.amount, description: 'Depósito manual' });
+    toast.success('Depósito realizado com sucesso!');
     depositModal.open = false;
     await fetchAccount();
   } catch (err) {
-    alert(err.response?.data?.message || 'Erro ao realizar depósito.');
+    toast.error(err.response?.data?.message || 'Erro ao realizar depósito.');
   }
 };
 
 const confirmWithdraw = async () => {
   try {
     await api.post('/account/withdraw', { amount: withdrawModal.amount, description: 'Saque manual' });
+    toast.success('Saque realizado com sucesso!');
     withdrawModal.open = false;
     await fetchAccount();
   } catch (err) {
-    alert(err.response?.data?.message || 'Erro ao realizar saque.');
+    toast.error(err.response?.data?.message || 'Erro ao realizar saque.');
   }
 };
 
