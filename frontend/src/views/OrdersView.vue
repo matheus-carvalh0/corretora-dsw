@@ -9,15 +9,50 @@
 
       <div class="tabs">
         <button 
-          :class="['tab-btn', { active: activeTab === 'pending' }]" 
-          @click="activeTab = 'pending'">
-          Pendentes
-        </button>
-        <button 
           :class="['tab-btn', { active: activeTab === 'history' }]" 
           @click="activeTab = 'history'">
           Histórico
         </button>
+        <button 
+          :class="['tab-btn', { active: activeTab === 'pending' }]" 
+          @click="activeTab = 'pending'">
+          Pendentes
+        </button>
+      </div>
+
+      <div v-if="activeTab === 'history'">
+        <h3>Histórico de Ordens</h3>
+        <div class="table-wrap" v-if="historyOrders.length">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Quantidade</th>
+                <th>Preço Executado</th>
+                <th>Minuto Execução</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="order in historyOrders" :key="order.id">
+                <td><strong>{{ order.ticker }}</strong></td>
+                <td :class="order.type === 'BUY' ? 'pos' : 'neg'">
+                  {{ order.type === 'BUY' ? 'Compra' : 'Venda' }}
+                </td>
+                <td>
+                  <span :class="['badge', order.status.toLowerCase()]">
+                    {{ order.status === 'EXECUTED' ? 'Executada' : 'Cancelada' }}
+                  </span>
+                </td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.executedPrice ? 'R$ ' + fmt(order.executedPrice) : '-' }}</td>
+                <td>{{ order.status === 'EXECUTED' ? order.simulationMinute : '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p v-else-if="!loading">Nenhum histórico de ordens.</p>
       </div>
 
       <div v-if="activeTab === 'pending'">
@@ -57,41 +92,6 @@
         <p v-else-if="!loading">Nenhuma ordem pendente.</p>
       </div>
 
-      <div v-if="activeTab === 'history'">
-        <h3>Histórico de Ordens</h3>
-        <div class="table-wrap" v-if="historyOrders.length">
-          <table>
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th>Tipo</th>
-                <th>Status</th>
-                <th>Quantidade</th>
-                <th>Preço Executado</th>
-                <th>Minuto Execução</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="order in historyOrders" :key="order.id">
-                <td><strong>{{ order.ticker }}</strong></td>
-                <td :class="order.type === 'BUY' ? 'pos' : 'neg'">
-                  {{ order.type === 'BUY' ? 'Compra' : 'Venda' }}
-                </td>
-                <td>
-                  <span :class="['badge', order.status.toLowerCase()]">
-                    {{ order.status === 'EXECUTED' ? 'Executada' : 'Cancelada' }}
-                  </span>
-                </td>
-                <td>{{ order.quantity }}</td>
-                <td>{{ order.executedPrice ? 'R$ ' + fmt(order.executedPrice) : '-' }}</td>
-                <td>{{ order.status === 'EXECUTED' ? order.simulationMinute : '-' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p v-else-if="!loading">Nenhum histórico de ordens.</p>
-      </div>
-
       <!-- Modal de Confirmação de Cancelamento -->
       <div v-if="orderToCancel" class="modal-overlay" @click.self="orderToCancel = null">
         <div class="modal">
@@ -116,7 +116,7 @@ import { useToast } from '../composables/useToast';
 
 const toast = useToast();
 
-const activeTab = ref('pending');
+const activeTab = ref('history');
 const pendingOrders = ref([]);
 const historyOrders = ref([]);
 const loading = ref(false);
@@ -137,7 +137,7 @@ const fetchOrders = async () => {
   try {
     if (activeTab.value === 'pending') {
       const { data } = await api.get('/orders');
-      pendingOrders.value = data.data.orders;
+      pendingOrders.value = data.data.orders.filter(o => o.status === 'PENDING');
     } else {
       const { data } = await api.get('/orders/history');
       historyOrders.value = data.data.orders;
