@@ -1,21 +1,13 @@
 <template>
   <div class="page">
-    <header class="topbar">
-      <BrandMark />
-      <nav>
-        <RouterLink to="/market">Mercado</RouterLink>
-        <RouterLink to="/portfolio">Carteira</RouterLink>
-        <RouterLink to="/account">Conta</RouterLink>
-      </nav>
-      <button class="btn-logout" @click="handleLogout">Sair</button>
-    </header>
+    <Topbar />
 
     <main class="container">
-      <div class="clock-bar">
-        <span class="clock">🕑 {{ simulationTime }}</span>
-        <button class="btn-clock" @click="advance(1)" :disabled="loading">+1 min</button>
-        <button class="btn-clock" @click="advance(5)" :disabled="loading">+5 min</button>
-      </div>
+      <ClockBar 
+        :simulationTime="simulationTime" 
+        @time-advanced="handleTimeAdvanced"
+        @error="handleClockError"
+      />
 
       <div class="summary">
         <span>Saldo disponível: <strong>R$ {{ fmt(balance) }}</strong></span>
@@ -34,7 +26,9 @@
             <th>Qtd</th>
             <th>Preço médio</th>
             <th>Preço atual</th>
-            <th>P&amp;L</th>
+            <th>P&amp;L (R$)</th>
+            <th>P&amp;L (%)</th>
+            <th>Histórico P&amp;L</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -46,6 +40,12 @@
             <td>R$ {{ fmt(item.currentPrice) }}</td>
             <td :class="item.pnl >= 0 ? 'pos' : 'neg'">
               {{ item.pnl >= 0 ? '+' : '' }}R$ {{ fmt(item.pnl) }}
+            </td>
+            <td :class="item.pnlPercent >= 0 ? 'pos' : 'neg'">
+              {{ item.pnlPercent >= 0 ? '+' : '' }}{{ fmt(item.pnlPercent) }}%
+            </td>
+            <td :class="item.realizedPnl >= 0 ? 'pos' : 'neg'">
+              {{ item.realizedPnl >= 0 ? '+' : '' }}R$ {{ fmt(item.realizedPnl) }}
             </td>
             <td>
               <button class="btn-sm btn-sell" @click="openSell(item)">Vender</button>
@@ -87,12 +87,11 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import BrandMark from '../components/BrandMark.vue';
+import Topbar from '../components/Topbar.vue';
+import ClockBar from '../components/ClockBar.vue';
 
 const router = useRouter();
-const auth   = useAuthStore();
 
 const items          = ref([]);
 const totalPnl       = ref(0);
@@ -120,18 +119,13 @@ const fetchPortfolio = async () => {
   }
 };
 
-const advance = async (minutes) => {
-  loading.value = true;
-  try {
-    const endpoint = minutes === 1 ? '/market/advance-minute' : '/market/advance-five-minutes';
-    const { data } = await api.post(endpoint);
-    simulationTime.value = data.data.simulationTime;
-    await fetchPortfolio();
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Erro ao avançar relógio.';
-  } finally {
-    loading.value = false;
-  }
+const handleTimeAdvanced = async (newTime) => {
+  simulationTime.value = newTime;
+  await fetchPortfolio();
+};
+
+const handleClockError = (msg) => {
+  error.value = msg;
 };
 
 const openSell = (item) => {
@@ -151,11 +145,6 @@ const confirmSell = async () => {
   } catch (err) {
     alert(err.response?.data?.message || 'Erro na venda.');
   }
-};
-
-const handleLogout = async () => {
-  await auth.logout();
-  router.push({ name: 'Login' });
 };
 
 onMounted(fetchPortfolio);

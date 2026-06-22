@@ -519,6 +519,107 @@ tbody tr:hover { background: var(--surface-2); }
 }
 
 /* ---------------------------------------------------------------
+   Alertas de sucesso (par do .error)
+   --------------------------------------------------------------- */
+.success {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #A6E4C4;
+  background: var(--gain-soft);
+  border: 1px solid var(--gain);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.85rem;
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
+}
+.success::before { content: '✓'; color: var(--gain); font-weight: 700; }
+
+/* ---------------------------------------------------------------
+   Link "Esqueceu sua senha?"
+   --------------------------------------------------------------- */
+.forgot-link {
+  text-align: center;
+  margin: 0.75rem 0 0;
+  font-size: 0.84rem;
+}
+.forgot-link a {
+  color: var(--text-faint);
+  border-bottom: 1px dashed var(--hairline-2);
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.forgot-link a:hover {
+  color: var(--brass-hi);
+  border-bottom-color: var(--brass-hi);
+}
+
+/* ---------------------------------------------------------------
+   Indicador de etapas (recuperação de senha)
+   --------------------------------------------------------------- */
+.step-indicator {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--brass);
+  background: var(--brass-soft);
+  border: 1px solid rgba(199, 160, 66, 0.25);
+  border-radius: 100px;
+  padding: 0.35rem 0.85rem;
+  margin: 0 0 1.1rem;
+  letter-spacing: 0.03em;
+}
+
+/* ---------------------------------------------------------------
+   Seção card (troca de senha, etc.)
+   --------------------------------------------------------------- */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 1.6rem 1.6rem 1.4rem;
+  max-width: 460px;
+}
+.section-card form { display: flex; flex-direction: column; gap: 1.1rem; }
+.section-card .form-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+.section-card .form-actions button { flex: 1; }
+.section-card .form-actions a { flex: 1; text-decoration: none; border-bottom: none; }
+.section-card .form-actions a button { width: 100%; }
+
+/* ---------------------------------------------------------------
+   Ações da conta (botões abaixo do saldo)
+   --------------------------------------------------------------- */
+.account-actions {
+  display: flex;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+}
+.account-actions a { border-bottom: none; }
+
+/* ---------------------------------------------------------------
+   Page header com link voltar
+   --------------------------------------------------------------- */
+.page-header {
+  margin-bottom: 1.5rem;
+}
+.page-header h2 { margin-bottom: 0; }
+.back-link {
+  display: inline-block;
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  border-bottom: none;
+  margin-bottom: 0.5rem;
+  transition: color 0.15s var(--ease);
+}
+.back-link:hover { color: var(--brass-hi); }
+
+/* ---------------------------------------------------------------
    404
    --------------------------------------------------------------- */
 .not-found {

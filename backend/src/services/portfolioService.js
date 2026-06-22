@@ -22,18 +22,25 @@ const getPortfolio = async (user) => {
   const priceMap = Object.fromEntries(prices.map((p) => [p.ticker, p.preco]));
 
   let totalPnl = 0;
-  const enriched = items.map((item) => {
-    const currentPrice = priceMap[item.ticker] ?? parseFloat(item.avgBuyPrice);
-    const pnl = parseFloat(((currentPrice - item.avgBuyPrice) * item.quantity).toFixed(2));
-    totalPnl += pnl;
-    return {
-      ticker: item.ticker,
-      quantity: item.quantity,
-      avgBuyPrice: parseFloat(item.avgBuyPrice),
-      currentPrice,
-      pnl,
-    };
-  });
+  const enriched = items
+    .filter(item => item.quantity > 0)
+    .map((item) => {
+      const currentPrice = priceMap[item.ticker] ?? parseFloat(item.avgBuyPrice);
+      const pnl = parseFloat(((currentPrice - item.avgBuyPrice) * item.quantity).toFixed(2));
+      const pnlPercent = item.avgBuyPrice > 0 
+        ? parseFloat((((currentPrice - item.avgBuyPrice) / item.avgBuyPrice) * 100).toFixed(2)) 
+        : 0;
+      totalPnl += pnl;
+      return {
+        ticker: item.ticker,
+        quantity: item.quantity,
+        avgBuyPrice: parseFloat(item.avgBuyPrice),
+        currentPrice,
+        pnl,
+        pnlPercent,
+        realizedPnl: parseFloat(item.realizedPnl || 0),
+      };
+    });
 
   return { items: enriched, totalPnl: parseFloat(totalPnl.toFixed(2)) };
 };
@@ -186,7 +193,8 @@ const executeBuy = async (userId, ticker, quantity, price, orderId = null) => {
     newQty = quantity;
     newAvg = price;
   }
-  await portfolioRepository.upsert(userId, ticker, newQty, newAvg);
+  // realizedPnl passado como null para manter o valor atual inalterado
+  await portfolioRepository.upsert(userId, ticker, newQty, newAvg, null);
 
   // Lança débito na conta corrente
   await transactionRepository.create({
@@ -222,13 +230,13 @@ const executeSell = async (userId, ticker, quantity, price, orderId = null) => {
   const newBalance = parseFloat((parseFloat(user.balance) + totalValue).toFixed(2));
   await userRepository.update(userId, { balance: newBalance });
 
+  // Calcula o lucro ou prejuízo da venda
+  const profitOrLoss = (price - position.avgBuyPrice) * quantity;
+  const newRealizedPnl = parseFloat((parseFloat(position.realizedPnl || 0) + profitOrLoss).toFixed(2));
+
   // Atualiza carteira
   const newQty = position.quantity - quantity;
-  if (newQty === 0) {
-    await portfolioRepository.remove(userId, ticker);
-  } else {
-    await portfolioRepository.upsert(userId, ticker, newQty, position.avgBuyPrice);
-  }
+  await portfolioRepository.upsert(userId, ticker, newQty, position.avgBuyPrice, newRealizedPnl);
 
   // Lança crédito na conta corrente
   await transactionRepository.create({

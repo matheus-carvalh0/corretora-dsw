@@ -1,21 +1,10 @@
 {
   "info": {
+    "_postman_id": "a2969dbc-922f-4c0b-9ac9-32d13df0423e",
     "name": "Corretora DSW - Testes",
-    "description": "Collection com todos os casos de testes exigidos pelo enunciado.",
+    "description": "Collection com todos os casos de testes.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "https://corretora-dsw-api.onrender.com/api",
-      "type": "string"
-    },
-    {
-      "key": "token",
-      "value": "",
-      "type": "string"
-    }
-  ],
   "item": [
     {
       "name": "1. AUTENTICAÇÃO",
@@ -41,13 +30,22 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Teste Postman\",\n  \"email\": \"postman@dsw.com\",\n  \"password\": \"senha123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"name\": \"Teste Postman\",\n  \"email\": \"postman2@dsw.com\",\n  \"password\": \"senha123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
             }
           }
         },
@@ -72,13 +70,22 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"postman@dsw.com\",\n  \"password\": \"senha123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"email\": \"postman2@dsw.com\",\n  \"password\": \"senha123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -89,7 +96,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 401 Unauthorized\", function () { pm.response.to.have.status(401); });"
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
                 ],
                 "type": "text/javascript"
               }
@@ -100,13 +107,22 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"postman@dsw.com\",\n  \"password\": \"senha_errada\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"email\": \"postman2@dsw.com\",\n  \"password\": \"errada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -117,7 +133,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 409 Conflict\", function () { pm.response.to.have.status(409); });"
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });"
                 ],
                 "type": "text/javascript"
               }
@@ -128,68 +144,350 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Teste Postman\",\n  \"email\": \"postman@dsw.com\",\n  \"password\": \"senha123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"name\": \"Teste Postman\",\n  \"email\": \"postman2@dsw.com\",\n  \"password\": \"senha123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
             }
           }
         },
         {
-          "name": "1.5 Endpoint protegido sem token",
+          "name": "1.5 Endpoint sem token",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 401 Unauthorized\", function () { pm.response.to.have.status(401); });"
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
                 ],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/portfolio",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.6 Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.7 Recuperar senha",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"postman2@dsw.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.8 Trocar senha",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"senha123\",\n  \"newPassword\": \"novaSenha123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "2. MERCADO",
+      "name": "2. MERCADO E WATCHLIST",
       "item": [
         {
           "name": "2.1 Visualizar mercado",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/market",
-              "host": ["{{baseUrl}}"],
-              "path": ["market"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "market"
+              ]
             }
           }
         },
         {
-          "name": "2.2 Avançar relógio em 1 minuto",
+          "name": "2.2 Horário atual",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
-            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/market/advance-minute",
-              "host": ["{{baseUrl}}"],
-              "path": ["market", "advance-minute"]
+              "raw": "{{baseUrl}}/market/time",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "market",
+                "time"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.3 Listar Tickers Disponíveis",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/market/tickers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "market",
+                "tickers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 Avançar Tempo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"minutes\": 15\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/market/advance-time",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "market",
+                "advance-time"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.5 Visualizar Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stocks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stocks"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.6 Adicionar ação na Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"COGN3\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stocks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stocks"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.7 Remover ação da Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/stocks/COGN3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stocks",
+                "COGN3"
+              ]
             }
           }
         }
@@ -201,123 +499,213 @@
         {
           "name": "3.1 Compra a mercado",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": 10\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/buy",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "buy"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "buy"
+              ]
             }
           }
         },
         {
-          "name": "3.4 Compra limitada (pendente)",
+          "name": "3.2 Compra limitada (pendente)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": 5,\n  \"limitPrice\": 35\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/buy",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "buy"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "buy"
+              ]
             }
           }
         },
         {
-          "name": "3.7 Compra com quantidade zero",
+          "name": "3.3 Compra com quantidade zero",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () { pm.response.to.have.status(400); });"
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                 ],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": 0\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/buy",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "buy"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "buy"
+              ]
             }
           }
         },
         {
-          "name": "3.8 Compra negativa",
+          "name": "3.4 Compra negativa",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () { pm.response.to.have.status(400); });"
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                 ],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": -5\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/buy",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "buy"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "buy"
+              ]
             }
           }
         },
         {
-          "name": "3.9 Compra sem saldo",
+          "name": "3.5 Compra sem saldo",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () { pm.response.to.have.status(400); });"
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                 ],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": 999999\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/buy",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "buy"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "buy"
+              ]
             }
           }
         }
@@ -329,94 +717,166 @@
         {
           "name": "4.1 Venda a mercado",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": 2\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/sell",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "sell"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "sell"
+              ]
             }
           }
         },
         {
           "name": "4.2 Venda limitada (pendente)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": 2,\n  \"limitPrice\": 50\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/sell",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "sell"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "sell"
+              ]
             }
           }
         },
         {
-          "name": "4.4 Vender mais do que possui",
+          "name": "4.3 Vender mais do que possui",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () { pm.response.to.have.status(400); });"
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                 ],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": 999\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/sell",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "sell"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "sell"
+              ]
             }
           }
         },
         {
-          "name": "4.5 Venda negativa",
+          "name": "4.4 Venda negativa",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () { pm.response.to.have.status(400); });"
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                 ],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ticker\": \"PETR4\",\n  \"quantity\": -1\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/portfolio/sell",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio", "sell"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio",
+                "sell"
+              ]
             }
           }
         }
@@ -428,108 +888,270 @@
         {
           "name": "5.1 Visualizar carteira",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/portfolio",
-              "host": ["{{baseUrl}}"],
-              "path": ["portfolio"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
             }
           }
         },
         {
-          "name": "6.1 e 6.2 Extrato Conta Corrente",
+          "name": "5.2 Extrato Conta Corrente",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/account",
-              "host": ["{{baseUrl}}"],
-              "path": ["account"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account"
+              ]
             }
           }
         },
         {
-          "name": "6.3 Depósito manual",
+          "name": "5.3 Depósito manual",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"description\": \"Depósito teste\",\n  \"amount\": 500\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/account/deposit",
-              "host": ["{{baseUrl}}"],
-              "path": ["account", "deposit"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "deposit"
+              ]
             }
           }
         },
         {
-          "name": "6.4 Retirada manual",
+          "name": "5.4 Retirada manual",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"description\": \"Retirada teste\",\n  \"amount\": 100\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/account/withdraw",
-              "host": ["{{baseUrl}}"],
-              "path": ["account", "withdraw"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "withdraw"
+              ]
             }
           }
         },
         {
-          "name": "6.5 Retirada inválida (negativa)",
+          "name": "5.5 Retirada inválida (negativa)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () { pm.response.to.have.status(400); });"
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                 ],
                 "type": "text/javascript"
               }
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"description\": \"Teste negativo\",\n  \"amount\": -50\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/account/withdraw",
-              "host": ["{{baseUrl}}"],
-              "path": ["account", "withdraw"]
-            }
-          }
-        },
-        {
-          "name": "7.1 Histórico de ordens",
-          "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/orders",
-              "host": ["{{baseUrl}}"],
-              "path": ["orders"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "withdraw"
+              ]
             }
           }
         }
       ]
+    },
+    {
+      "name": "6. ORDENS",
+      "item": [
+        {
+          "name": "6.1 Ordens pendentes (condicionais)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.2 Histórico de ordens",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "history"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.3 Cancelar ordem",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://corretora-dsw-api.onrender.com/api"
+    },
+    {
+      "key": "token",
+      "value": ""
     }
   ]
 }

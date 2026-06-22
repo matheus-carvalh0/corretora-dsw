@@ -16,31 +16,34 @@ const getMarket = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-const advanceMinute = async (req, res, next) => {
-  try {
-    const updated = await marketService.advanceClock(req.user.id, 1);
-    const userStocks = await stockService.getUserStocks(req.user.id);
-    const { minute, market } = await marketService.getMarket(updated, userStocks);
+const { body } = require('express-validator');
+const { validate } = require('../utils/validators');
 
+const getTime = async (req, res, next) => {
+  try {
+    const { simulationMinute } = req.user;
     return success(res, {
-      simulationMinute: minute,
-      simulationTime: formatSimulationTime(minute),
-      market,
-    }, 'Relógio avançado em +1 minuto.');
+      simulationMinute,
+      simulationTime: formatSimulationTime(simulationMinute),
+    });
   } catch (err) { next(err); }
 };
 
-const advanceFiveMinutes = async (req, res, next) => {
-  try {
-    const updated = await marketService.advanceClock(req.user.id, 5);
-    const userStocks = await stockService.getUserStocks(req.user.id);
-    const { minute, market } = await marketService.getMarket(updated, userStocks);
+const advanceTimeRules = [
+  body('minutes').isInt({ min: 1 }).withMessage('Minutos deve ser um número inteiro positivo.'),
+];
 
+const advanceTime = async (req, res, next) => {
+  try {
+    validate(req);
+    const { minutes } = req.body;
+    const updated = await marketService.advanceClock(req.user.id, parseInt(minutes, 10));
+    
+    // Retorna apenas a confirmação e o novo tempo, para ser mais limpo
     return success(res, {
-      simulationMinute: minute,
-      simulationTime: formatSimulationTime(minute),
-      market,
-    }, 'Relógio avançado em +5 minutos.');
+      simulationMinute: updated.simulationMinute,
+      simulationTime: formatSimulationTime(updated.simulationMinute),
+    }, `Relógio avançado em +${minutes} minutos.`);
   } catch (err) { next(err); }
 };
 
@@ -52,4 +55,4 @@ const getTickers = async (_req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getMarket, advanceMinute, advanceFiveMinutes, getTickers };
+module.exports = { getMarket, getTime, advanceTimeRules, advanceTime, getTickers };

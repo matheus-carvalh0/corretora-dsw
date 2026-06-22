@@ -22,4 +22,10 @@ const updateStatus = (id, status, executedPrice = null) =>
 const cancel = (id, userId) =>
   Order.update({ status: 'CANCELLED' }, { where: { id, userId, status: 'PENDING' } });
 
-module.exports = { findAllByUser, findPendingByUser, findById, create, updateStatus, cancel };
+const findHistoryByUser = (userId) =>
+  Order.findAll({
+    where: { userId, status: { [Op.in]: ['EXECUTED', 'CANCELLED'] } },
+    order: [['updatedAt', 'DESC']],
+  });
+
+module.exports = { findAllByUser, findPendingByUser, findById, create, updateStatus, cancel, findHistoryByUser };

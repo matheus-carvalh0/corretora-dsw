@@ -5,6 +5,7 @@ const userStockRepository = require('../repositories/userStockRepository');
 const transactionRepository = require('../repositories/transactionRepository');
 const { generateToken } = require('../config/jwt');
 const marketService = require('./marketService');
+const emailService = require('./emailService');
 
 const SALT_ROUNDS = 12;
 
@@ -71,9 +72,8 @@ const login = async ({ email, password }) => {
 };
 
 /**
- * Gera token de recuperação de senha (válido por 1 hora).
- * Em produção, este token seria enviado por e-mail.
- * Para fins acadêmicos, retornamos diretamente no response.
+ * Gera token de recuperação de senha (válido por 1 hora)
+ * e envia por e-mail via Gmail SMTP.
  */
 const forgotPassword = async ({ email }) => {
   const user = await userRepository.findByEmail(email);
@@ -85,9 +85,18 @@ const forgotPassword = async ({ email }) => {
 
   await userRepository.update(user.id, { resetToken, resetTokenExpires });
 
+  // Envia o token por e-mail
+  try {
+    await emailService.sendResetPasswordEmail(user.email, user.name, resetToken);
+  } catch (err) {
+    console.error('Erro ao enviar e-mail de recuperação:', err.message);
+    const error = new Error('Não foi possível enviar o e-mail. Tente novamente mais tarde.');
+    error.status = 500;
+    throw error;
+  }
+
   return {
-    message: 'Token de recuperação gerado.',
-    resetToken, // Em produção: enviar por e-mail, não retornar aqui
+    message: 'Se o e-mail existir, você receberá as instruções.',
   };
 };
 

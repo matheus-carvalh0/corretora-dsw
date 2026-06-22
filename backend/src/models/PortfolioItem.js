@@ -31,6 +31,12 @@ const PortfolioItem = sequelize.define('PortfolioItem', {
     allowNull: false,
     defaultValue: 0,
   },
+  // Histórico de lucro/perda realizado (PNL)
+  realizedPnl: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+    defaultValue: 0,
+  },
 }, {
   indexes: [
     { unique: true, fields: ['userId', 'ticker'] },

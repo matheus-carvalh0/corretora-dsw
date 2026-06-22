@@ -8,6 +8,13 @@ const getOrders = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+const getOrderHistory = async (req, res, next) => {
+  try {
+    const orders = await orderRepository.findHistoryByUser(req.user.id);
+    return success(res, { orders });
+  } catch (err) { next(err); }
+};
+
 const cancelOrder = async (req, res, next) => {
   try {
     const affected = await orderRepository.cancel(parseInt(req.params.id), req.user.id);
@@ -20,4 +27,4 @@ const cancelOrder = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getOrders, cancelOrder };
+module.exports = { getOrders, getOrderHistory, cancelOrder };

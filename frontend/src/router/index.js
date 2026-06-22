@@ -1,21 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Importações lazy — cada rota só é carregada quando necessário
-const LoginView      = () => import('../views/LoginView.vue');
-const RegisterView   = () => import('../views/RegisterView.vue');
-const MarketView     = () => import('../views/MarketView.vue');
-const PortfolioView  = () => import('../views/PortfolioView.vue');
-const AccountView    = () => import('../views/AccountView.vue');
-const NotFoundView   = () => import('../views/NotFoundView.vue');
+const LoginView           = () => import('../views/LoginView.vue');
+const RegisterView        = () => import('../views/RegisterView.vue');
+const ForgotPasswordView  = () => import('../views/ForgotPasswordView.vue');
+const MarketView          = () => import('../views/MarketView.vue');
+const PortfolioView       = () => import('../views/PortfolioView.vue');
+const AccountView         = () => import('../views/AccountView.vue');
+const OrdersView          = () => import('../views/OrdersView.vue');
+const ChangePasswordView  = () => import('../views/ChangePasswordView.vue');
+const NotFoundView        = () => import('../views/NotFoundView.vue');
 
 const routes = [
-  { path: '/',          redirect: '/market' },
-  { path: '/login',     name: 'Login',     component: LoginView,     meta: { guest: true } },
-  { path: '/register',  name: 'Register',  component: RegisterView,  meta: { guest: true } },
-  { path: '/market',    name: 'Market',    component: MarketView,    meta: { requiresAuth: true } },
-  { path: '/portfolio', name: 'Portfolio', component: PortfolioView, meta: { requiresAuth: true } },
-  { path: '/account',   name: 'Account',   component: AccountView,   meta: { requiresAuth: true } },
-  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundView },
+  { path: '/',                redirect: '/market' },
+  { path: '/login',           name: 'Login',          component: LoginView,          meta: { guest: true } },
+  { path: '/register',        name: 'Register',       component: RegisterView,       meta: { guest: true } },
+  { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPasswordView, meta: { guest: true } },
+  { path: '/market',          name: 'Market',         component: MarketView,         meta: { requiresAuth: true } },
+  { path: '/portfolio',       name: 'Portfolio',      component: PortfolioView,      meta: { requiresAuth: true } },
+  { path: '/account',         name: 'Account',        component: AccountView,        meta: { requiresAuth: true } },
+  { path: '/orders',          name: 'Orders',         component: OrdersView,         meta: { requiresAuth: true } },
+  { path: '/change-password', name: 'ChangePassword', component: ChangePasswordView, meta: { requiresAuth: true } },
+  { path: '/:pathMatch(.*)*', name: 'NotFound',       component: NotFoundView },
 ];
 
 const router = createRouter({

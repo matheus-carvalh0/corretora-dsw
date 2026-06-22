@@ -1,22 +1,15 @@
 <template>
   <div class="page">
-    <header class="topbar">
-      <BrandMark />
-      <nav>
-        <RouterLink to="/market">Mercado</RouterLink>
-        <RouterLink to="/portfolio">Carteira</RouterLink>
-        <RouterLink to="/account">Conta</RouterLink>
-      </nav>
-      <button class="btn-logout" @click="handleLogout">Sair</button>
-    </header>
+    <Topbar />
 
     <main class="container">
-      <div class="clock-bar">
-        <span class="clock">🕑 {{ simulationTime }}</span>
-        <button class="btn-clock" @click="advance(1)" :disabled="loading">+1 min</button>
-        <button class="btn-clock" @click="advance(5)" :disabled="loading">+5 min</button>
+      <ClockBar 
+        :simulationTime="simulationTime" 
+        @time-advanced="handleTimeAdvanced"
+        @error="handleClockError"
+      >
         <button class="btn-add" @click="showAddModal = true">+ Adicionar ação</button>
-      </div>
+      </ClockBar>
 
       <p v-if="error" class="error">{{ error }}</p>
 
@@ -101,12 +94,11 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import BrandMark from '../components/BrandMark.vue';
+import Topbar from '../components/Topbar.vue';
+import ClockBar from '../components/ClockBar.vue';
 
 const router = useRouter();
-const auth   = useAuthStore();
 
 const market         = ref([]);
 const simulationTime = ref('14:00');
@@ -143,18 +135,13 @@ const fetchTickers = async () => {
   allTickers.value = data.data.tickers;
 };
 
-const advance = async (minutes) => {
-  loading.value = true;
-  try {
-    const endpoint = minutes === 1 ? '/market/advance-minute' : '/market/advance-five-minutes';
-    const { data } = await api.post(endpoint);
-    market.value         = data.data.market;
-    simulationTime.value = data.data.simulationTime;
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Erro ao avançar relógio.';
-  } finally {
-    loading.value = false;
-  }
+const handleTimeAdvanced = async (newTime) => {
+  simulationTime.value = newTime;
+  await fetchMarket();
+};
+
+const handleClockError = (msg) => {
+  error.value = msg;
 };
 
 const addStock = async () => {
@@ -194,11 +181,6 @@ const confirmBuy = async () => {
   } catch (err) {
     alert(err.response?.data?.message || 'Erro na compra.');
   }
-};
-
-const handleLogout = async () => {
-  await auth.logout();
-  router.push({ name: 'Login' });
 };
 
 onMounted(async () => {

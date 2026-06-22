@@ -15,6 +15,7 @@
           {{ loading ? 'Entrando...' : 'Entrar' }}
         </button>
       </form>
+      <p class="forgot-link"><RouterLink to="/forgot-password">Esqueceu sua senha?</RouterLink></p>
       <p>Não tem conta? <RouterLink to="/register">Cadastre-se</RouterLink></p>
     </div>
   </div>
